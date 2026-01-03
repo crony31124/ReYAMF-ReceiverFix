@@ -25,7 +25,7 @@ class ReyamfFix : IXposedHookLoadPackage {
                         val receiver = XposedHelpers.getObjectField(
                             param.thisObject,
                             "broadcastReceiver"
-                        )
+                        ) as? BroadcastReceiver ?: return
                         val ctx = param.thisObject as Context
                         ctx.unregisterReceiver(receiver)
                     } catch (_: IllegalArgumentException) {
