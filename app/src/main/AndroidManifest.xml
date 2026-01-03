@@ -1,0 +1,22 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.fix.reyamf.receiver">
+
+    <application
+        android:label="ReYAMF Receiver Fix"
+        android:allowBackup="false">
+
+        <!-- LSPosed metadata -->
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Fix reYAMF unregisterReceiver crash" />
+
+        <meta-data
+            android:name="xposedminversion"
+            android:value="93" />
+    </application>
+
+</manifest>
