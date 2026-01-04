@@ -1,6 +1,7 @@
 package com.fix.reyamf.receiver
 
 import android.content.Context
+import android.content.BroadcastReceiver
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
