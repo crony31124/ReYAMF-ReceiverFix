@@ -12,19 +12,23 @@ class ReyamfFix : IXposedHookLoadPackage {
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
     if (lpparam.packageName != "com.mja.reyamf") return
 
-    XposedHelpers.findAndHookMethod(
-        Context::class.java,
-        "unregisterReceiver",
-        BroadcastReceiver::class.java,
-        object : XC_MethodHook() {
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                try {
-                    // let Android do its thing
-                } catch (_: IllegalArgumentException) {
-                    // swallow crash
-                    param.result = null
+    try {
+        XposedHelpers.findAndHookMethod(
+            android.content.ContextWrapper::class.java,
+            "unregisterReceiver",
+            BroadcastReceiver::class.java,
+            object : XC_MethodHook() {
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    try {
+                        // Let Android try normally
+                    } catch (_: IllegalArgumentException) {
+                        // Receiver already unregistered → swallow crash
+                        param.result = null
+                    }
                 }
             }
-        }
-    )
+        )
+    } catch (_: Throwable) {
+        // Safety net: prevent bootloop if API changes
+    }
 }
