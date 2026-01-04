@@ -10,38 +10,21 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 class ReyamfFix : IXposedHookLoadPackage {
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        if (lpparam.packageName != "com.mja.reyamf") return
+    if (lpparam.packageName != "com.mja.reyamf") return
 
-        try {
-            val clazz = XposedHelpers.findClass(
-                "com.mja.reyamf.xposed.ui.window.AppWindow",
-                lpparam.classLoader
-            )
-
-            XposedHelpers.findAndHookMethod(
-                clazz,
-                "onDestroy",
-                object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        try {
-                            val receiver =
-                                XposedHelpers.getObjectField(
-                                    param.thisObject,
-                                    "broadcastReceiver"
-                                ) as? BroadcastReceiver ?: return
-
-                            val ctx = param.thisObject as? Context ?: return
-
-                            ctx.unregisterReceiver(receiver)
-
-                        } catch (_: IllegalArgumentException) {
-                            // Receiver already unregistered → safe
-                        }
-                    }
+    XposedHelpers.findAndHookMethod(
+        Context::class.java,
+        "unregisterReceiver",
+        BroadcastReceiver::class.java,
+        object : XC_MethodHook() {
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                try {
+                    // let Android do its thing
+                } catch (_: IllegalArgumentException) {
+                    // swallow crash
+                    param.result = null
                 }
-            )
-        } catch (_: Throwable) {
-            // Class/field not found or reYAMF updated → prevent bootloop
+            }
         }
-    }
+    )
 }
